@@ -1,4 +1,5 @@
 ﻿using System;
+using Functional.Solutions._03Result;
 
 namespace Functional.Solutions._02Option
 {
@@ -18,6 +19,26 @@ namespace Functional.Solutions._02Option
       ifNone();
     }
 
+    public static Option<TOption> IfSome<TOption>(this Option<TOption> opt, Action<TOption> ifSome)
+    {
+      if (opt.IsSome)
+      {
+        ifSome(opt.Value);
+      }
+
+      return opt;
+    }
+
+    public static Option<TOption> IfNone<TOption>(this Option<TOption> opt, Action ifNone)
+    {
+      if (!opt.IsSome)
+      {
+        ifNone();
+      }
+
+      return opt;
+    }
+
     public static TOption IfNone<TOption>(this Option<TOption> opt, Func<TOption> ifNone)
       => opt.IsSome ? opt.Value : ifNone();
 
@@ -31,5 +52,11 @@ namespace Functional.Solutions._02Option
 
     public static Option<TSource> Filter<TSource>(this Option<TSource> opt, Func<TSource, bool> f)
       => opt.Bind(o => f(o) ? Option.Some(o) : Option.None);
+
+    public static Result<TOption, TFailure> ToResult<TOption, TFailure>(this Option<TOption> opt, Func<TFailure> ifNone) =>
+      opt.Match<TOption, Result<TOption, TFailure>>(res => res, () => ifNone());
+
+    public static Result<TOption, TFailure> ToResult<TOption, TFailure>(this Option<TOption> opt, TFailure ifNone) =>
+      opt.ToResult(() => ifNone);
   }
 }

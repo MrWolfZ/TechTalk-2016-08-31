@@ -7,13 +7,13 @@ namespace Examples
   {
     public static void Main()
     {
-      Console.Write("Which scenario do we want to run?\n1. Option\n2. Result\nAnswer: ");
+      Console.Write("Which scenario do we want to run?\n1. Option\n2. Result\n3. Async Result\nAnswer: ");
       Console.ReadLine()
              .TryParseInt()
              .Bind(Run)
              .Match(
                i => Console.WriteLine("Successfully ran scenario {0}!", i),
-               () => Console.WriteLine("An error occured!"));
+               () => Console.WriteLine("Invalid scenario!"));
 
       Console.WriteLine("Finished scenario run. Press any key to exit...");
       Console.ReadKey();
@@ -25,7 +25,13 @@ namespace Examples
       {
         case 1:
           OptionExample.Run();
-          return 1;
+          return choice;
+        case 2:
+          ResultExample.Run();
+          return choice;
+        case 3:
+          AsyncResultExample.Run().Wait();
+          return choice;
         default:
           return Option.None;
       }

@@ -5,8 +5,7 @@
     "emitEntryPoint": true
   },
   "dependencies": {
-    "Functional": "1.0.0-*",
-    "LanguageExt.Core": "*" 
+    "Functional": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {

@@ -22,10 +22,30 @@ namespace Functional.Solutions._03Result
       ifFailure(res.Failure);
     }
 
+    public static Result<TSuccess, TFailure> IfSuccess<TSuccess, TFailure>(this Result<TSuccess, TFailure> res, Action<TSuccess> ifSuccess)
+    {
+      if (res.IsSuccess)
+      {
+        ifSuccess(res.Success);
+      }
+
+      return res;
+    }
+
     public static TSuccess IfFailure<TSuccess, TFailure>(this Result<TSuccess, TFailure> res, Func<TFailure, TSuccess> ifFailure)
       => res.IsSuccess ? res.Success : ifFailure(res.Failure);
 
-    public static TSuccess IfFailure<TSuccess, TFailure>(this Result<TSuccess, TFailure> opt, TSuccess ifFailure) => opt.IfFailure(err => ifFailure);
+    public static TSuccess IfFailure<TSuccess, TFailure>(this Result<TSuccess, TFailure> res, TSuccess ifFailure) => res.IfFailure(err => ifFailure);
+
+    public static Result<TSuccess, TFailure> IfFailure<TSuccess, TFailure>(this Result<TSuccess, TFailure> res, Action<TFailure> ifFailure)
+    {
+      if (!res.IsSuccess)
+      {
+        ifFailure(res.Failure);
+      }
+
+      return res;
+    }
 
     public static Result<TResult, TFailure> Bind<TSuccess, TFailure, TResult>(this Result<TSuccess, TFailure> res, Func<TSuccess, Result<TResult, TFailure>> f)
       => res.Match(f, err => err);
@@ -38,5 +58,8 @@ namespace Functional.Solutions._03Result
 
     public static Result<TSuccess, TFailure> Filter<TSuccess, TFailure>(this Result<TSuccess, TFailure> res, Func<TSuccess, Option<TFailure>> f)
       => res.Bind<TSuccess, TFailure, TSuccess>(o => f(o).IfNone(res.Failure));
+
+    public static Option<TSuccess> ToOption<TSuccess, TFailure>(this Result<TSuccess, TFailure> res)
+      => res.IsSuccess ? Option.Some(res.Success) : Option.None;
   }
 }
