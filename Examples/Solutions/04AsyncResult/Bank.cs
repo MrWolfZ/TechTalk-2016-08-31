@@ -36,21 +36,20 @@ namespace Examples.Solutions._04AsyncResult
     }
 
     public Task<Result<Bank, string>> Deposit(long accountId, double amount) =>
-      this.UpdateAccount(accountId, a => a.Deposit(amount));
+      this.FindAccount(accountId)
+          .Bind(a => a.Deposit(amount))
+          .Map(this.SetAccount);
 
     public Task<Result<Bank, string>> Withdraw(long accountId, double amount) =>
-      this.UpdateAccount(accountId, a => a.Withdraw(amount));
+      this.FindAccount(accountId)
+          .Bind(a => a.Withdraw(amount))
+          .Map(this.SetAccount);
 
     private static async Task<Result<Unit, string>> SomeExternalSystemCall()
     {
       await Task.Delay(Random.Next(100, 800));
       return Unit.Default;
     }
-
-    private Task<Result<Bank, string>> UpdateAccount(long accountId, Func<Account, Task<Result<Account, string>>> f) =>
-      this.FindAccount(accountId)
-          .Bind(f)
-          .Map(this.SetAccount);
 
     private Bank SetAccount(Account account)
     {

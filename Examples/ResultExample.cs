@@ -54,12 +54,11 @@ namespace Examples
     private static Result<Bank, string> CreateAccount(Bank bank)
     {
       Console.Write("What is the account ID?\nAnswer: ");
-      var res = Console.ReadLine()
-                       .TryParseLong()
-                       .ToResult("could not parse account ID")
-                       .Bind(bank.CreateAccount);
-
-      return res.IfSuccess(b => Console.WriteLine("Created account!"));
+      return Console.ReadLine()
+                    .TryParseLong()
+                    .ToResult("could not parse account ID")
+                    .Bind(bank.CreateAccount)
+                    .IfSuccess(b => Console.WriteLine("Created account!"));
     }
 
     private static Result<Bank, string> Deposit(Bank bank)
@@ -69,10 +68,9 @@ namespace Examples
       Console.Write("How much do you want to deposit?\nAnswer: ");
       var amountInput = Console.ReadLine();
 
-      var res = TryParseAccountIdAndAmount(accountIdInput, amountInput)
-        .Bind(t => bank.Deposit(t.Item1, t.Item2));
-
-      return res.IfSuccess(b => Console.WriteLine("Deposited amount!"));
+      return TryParseAccountIdAndAmount(accountIdInput, amountInput)
+        .Bind(t => bank.Deposit(t.Item1, t.Item2))
+        .IfSuccess(b => Console.WriteLine("Deposited amount!"));
     }
 
     private static Result<Bank, string> Withdraw(Bank bank)
@@ -82,10 +80,9 @@ namespace Examples
       Console.Write("How much do you want to withdraw?\nAnswer: ");
       var amountInput = Console.ReadLine();
 
-      var res = TryParseAccountIdAndAmount(accountIdInput, amountInput)
-        .Bind(t => bank.Withdraw(t.Item1, t.Item2));
-
-      return res.IfSuccess(b => Console.WriteLine("Withdrew amount!"));
+      return TryParseAccountIdAndAmount(accountIdInput, amountInput)
+        .Bind(t => bank.Withdraw(t.Item1, t.Item2))
+        .IfSuccess(b => Console.WriteLine("Withdrew amount!"));
     }
 
     private static Result<Tuple<long, double>, string> TryParseAccountIdAndAmount(string accountId, string amount) =>

@@ -22,7 +22,9 @@ namespace Examples
           break;
         }
 
-        bank = res.IfNone(bank).IfNone(() => Console.WriteLine("An error occured during the operation!")).IfNone(bank);
+        bank = res.IfNone(bank)
+                  .IfNone(() => Console.WriteLine("An error occured during the operation!"))
+                  .IfNone(bank);
       }
 
       Console.WriteLine("Ended example with bank in state '{0}'.", bank);
@@ -52,11 +54,10 @@ namespace Examples
     private static Option<Bank> CreateAccount(Bank bank)
     {
       Console.Write("What is the account ID?\nAnswer: ");
-      var res = Console.ReadLine()
-                       .TryParseLong()
-                       .Bind(bank.CreateAccount);
-
-      return res.IfSome(b => Console.WriteLine("Created account!"));
+      return Console.ReadLine()
+                    .TryParseLong()
+                    .Bind(bank.CreateAccount)
+                    .IfSome(b => Console.WriteLine("Created account!"));
     }
 
     private static Option<Bank> Deposit(Bank bank)
@@ -66,10 +67,9 @@ namespace Examples
       Console.Write("How much do you want to deposit?\nAnswer: ");
       var amountInput = Console.ReadLine();
 
-      var res = TryParseAccountIdAndAmount(accountIdInput, amountInput)
-        .Bind(t => bank.Deposit(t.Item1, t.Item2));
-
-      return res.IfSome(b => Console.WriteLine("Deposited amount!"));
+      return TryParseAccountIdAndAmount(accountIdInput, amountInput)
+        .Bind(t => bank.Deposit(t.Item1, t.Item2))
+        .IfSome(b => Console.WriteLine("Deposited amount!"));
     }
 
     private static Option<Bank> Withdraw(Bank bank)
@@ -79,10 +79,9 @@ namespace Examples
       Console.Write("How much do you want to withdraw?\nAnswer: ");
       var amountInput = Console.ReadLine();
 
-      var res = TryParseAccountIdAndAmount(accountIdInput, amountInput)
-        .Bind(t => bank.Withdraw(t.Item1, t.Item2));
-
-      return res.IfSome(b => Console.WriteLine("Withdrew amount!"));
+      return TryParseAccountIdAndAmount(accountIdInput, amountInput)
+        .Bind(t => bank.Withdraw(t.Item1, t.Item2))
+        .IfSome(b => Console.WriteLine("Withdrew amount!"));
     }
 
     private static Option<Tuple<long, double>> TryParseAccountIdAndAmount(string accountId, string amount) =>

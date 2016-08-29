@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Functional.Solutions._02Option;
 
 namespace Examples.Solutions._02Option
@@ -32,14 +31,13 @@ namespace Examples.Solutions._02Option
     }
 
     public Option<Bank> Deposit(long accountId, double amount) =>
-      this.UpdateAccount(accountId, a => a.Deposit(amount));
+      this.FindAccount(accountId)
+          .Bind(a => a.Deposit(amount))
+          .Map(this.SetAccount);
 
     public Option<Bank> Withdraw(long accountId, double amount) =>
-      this.UpdateAccount(accountId, a => a.Withdraw(amount));
-
-    private Option<Bank> UpdateAccount(long accountId, Func<Account, Option<Account>> f) =>
       this.FindAccount(accountId)
-          .Bind(f)
+          .Bind(a => a.Withdraw(amount))
           .Map(this.SetAccount);
 
     private Bank SetAccount(Account account)
