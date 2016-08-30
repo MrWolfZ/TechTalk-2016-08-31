@@ -25,8 +25,9 @@ namespace Examples
           break;
         }
 
-        var res = await opt.ToResult("").Bind(async t => (await t).IfFailure(err => Console.Error.WriteLine($"An error occured during the operation: {err}")));
-        bank = res.IfFailure(bank);
+        await opt.ToResult("").Map(t => t.Match(
+          b => bank = b,
+          err => Console.Error.WriteLine($"An error occured during the operation: {err}")));
       }
 
       Console.WriteLine("Ended example with bank in state '{0}'.", bank);
@@ -61,7 +62,7 @@ namespace Examples
                        .ToResult("could not parse account ID")
                        .Bind(bank.CreateAccount);
 
-      return (await res).IfSuccess(b => Console.WriteLine("Created account!"));
+      return (await res).DoIfSuccess(b => Console.WriteLine("Created account!"));
     }
 
     private static async Task<Result<Bank, string>> Deposit(Bank bank)
@@ -74,7 +75,7 @@ namespace Examples
       var res = TryParseAccountIdAndAmount(accountIdInput, amountInput)
         .Bind(t => bank.Deposit(t.Item1, t.Item2));
 
-      return (await res).IfSuccess(b => Console.WriteLine("Deposited amount!"));
+      return (await res).DoIfSuccess(b => Console.WriteLine("Deposited amount!"));
     }
 
     private static async Task<Result<Bank, string>> Withdraw(Bank bank)
@@ -87,7 +88,7 @@ namespace Examples
       var res = TryParseAccountIdAndAmount(accountIdInput, amountInput)
         .Bind(t => bank.Withdraw(t.Item1, t.Item2));
 
-      return (await res).IfSuccess(b => Console.WriteLine("Withdrew amount!"));
+      return (await res).DoIfSuccess(b => Console.WriteLine("Withdrew amount!"));
     }
 
     private static Result<Tuple<long, double>, string> TryParseAccountIdAndAmount(string accountId, string amount) =>

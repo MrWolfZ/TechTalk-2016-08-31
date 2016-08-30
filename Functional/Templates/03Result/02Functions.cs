@@ -1,7 +1,7 @@
 ﻿using System;
 using Functional.Solutions._02Option;
 
-namespace Functional.Solutions._03Result
+namespace Functional.Templates._03Result
 {
   public static class ResultExtensions
   {
@@ -42,17 +42,17 @@ namespace Functional.Solutions._03Result
       return res;
     }
 
+    // Bind
     public static Result<TResult, TFailure> Bind<TSuccess, TFailure, TResult>(this Result<TSuccess, TFailure> res, Func<TSuccess, Result<TResult, TFailure>> f)
-      => res.Match(f, err => err);
+    {
+      throw new NotImplementedException();
+    }
 
-    public static Result<TResult, TFailure> Map<TSuccess, TFailure, TResult>(this Result<TSuccess, TFailure> res, Func<TSuccess, TResult> f)
-      => res.Bind<TSuccess, TFailure, TResult>(o => f(o));
+    // Map
 
-    public static Result<TSuccess, TResult> MapFailure<TSuccess, TFailure, TResult>(this Result<TSuccess, TFailure> res, Func<TFailure, TResult> f)
-      => res.Match<TSuccess, TFailure, Result<TSuccess, TResult>>(suc => suc, err => f(err));
+    // MapFailure
 
-    public static Result<TSuccess, TFailure> Filter<TSuccess, TFailure>(this Result<TSuccess, TFailure> res, Func<TSuccess, Option<TFailure>> f)
-      => res.Bind<TSuccess, TFailure, TSuccess>(o => f(o).GetOrElse(res.Failure));
+    // Filter
 
     public static Option<TSuccess> ToOption<TSuccess, TFailure>(this Result<TSuccess, TFailure> res)
       => res.IsSuccess ? Option.Some(res.Success) : Option.None;

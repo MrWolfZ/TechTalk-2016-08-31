@@ -35,15 +35,53 @@ namespace Examples.Solutions._04AsyncResult
       return await SomeExternalSystemCall().Map(res => new Bank(updatedAccounts));
     }
 
+    private Result<Account, string> FindAccount(long accountId)
+    {
+      if (this.Accounts.ContainsKey(accountId))
+      {
+        return this.Accounts[accountId];
+      }
+
+      return $"account {accountId} does not exist";
+    }
+
     public Task<Result<Bank, string>> Deposit(long accountId, double amount) =>
       this.FindAccount(accountId)
-          .Bind(a => a.Deposit(amount))
+          .Bind(Deposit(amount))
           .Map(this.SetAccount);
+
+    private static Func<Account, Task<Result<Account, string>>> Deposit(double amount) => async a =>
+    {
+      if (amount < 0)
+      {
+        return $"amount cannot be negative: {amount}";
+      }
+
+      // Variant 2: await, then map on result
+      var res = await SomeExternalSystemCall();
+      return res.Map(r => a.With(balance: a.Balance + amount));
+    };
 
     public Task<Result<Bank, string>> Withdraw(long accountId, double amount) =>
       this.FindAccount(accountId)
-          .Bind(a => a.Withdraw(amount))
+          .Bind(Withdraw(amount))
           .Map(this.SetAccount);
+
+    private static Func<Account, Task<Result<Account, string>>> Withdraw(double amount) => async a =>
+    {
+      if (amount < 0)
+      {
+        return $"amount cannot be negative: {amount}";
+      }
+
+      if (a.Balance < amount)
+      {
+        return $"not enough funds to withdraw {amount}: {a.Balance}";
+      }
+
+      // Variant 2: map on task
+      return await SomeExternalSystemCall().Map(res => a.With(balance: a.Balance - amount));
+    };
 
     private static async Task<Result<Unit, string>> SomeExternalSystemCall()
     {
@@ -55,61 +93,6 @@ namespace Examples.Solutions._04AsyncResult
     {
       var updatedAccounts = new Dictionary<long, Account>(this.Accounts) { [account.Id] = account };
       return new Bank(updatedAccounts);
-    }
-
-    private Result<Account, string> FindAccount(long accountId)
-    {
-      if (this.Accounts.ContainsKey(accountId))
-      {
-        return this.Accounts[accountId];
-      }
-
-      return $"account {accountId} does not exist";
-    }
-
-    public class Account
-    {
-      public Account(long id, double balance)
-      {
-        this.Id = id;
-        this.Balance = balance;
-      }
-
-      public long Id { get; }
-      public double Balance { get; }
-
-      public override string ToString()
-      {
-        return $"[Account] Id: {this.Id}, Balance: {this.Balance}";
-      }
-
-      public async Task<Result<Account, string>> Withdraw(double amount)
-      {
-        if (amount < 0)
-        {
-          return $"amount cannot be negative: {amount}";
-        }
-
-        if (this.Balance < amount)
-        {
-          return $"not enough funds to withdraw {amount}: {this.Balance}";
-        }
-
-        // Option 1: map on task
-        return await SomeExternalSystemCall().Map(res => new Account(this.Id, this.Balance - amount));
-      }
-
-      public async Task<Result<Account, string>> Deposit(double amount)
-      {
-        if (amount < 0)
-        {
-          return $"amount cannot be negative: {amount}";
-        }
-
-        // Option 2: await, then map on result
-        var res = await SomeExternalSystemCall();
-        return res.Map(r => new Account(this.Id, this.Balance + amount));
-      }
     }
   }
 }

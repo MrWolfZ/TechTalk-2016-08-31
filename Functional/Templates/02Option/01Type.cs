@@ -1,4 +1,4 @@
-﻿namespace Functional.Solutions._02Option
+﻿namespace Functional.Templates._02Option
 {
   public static class Option
   {
@@ -22,9 +22,5 @@
 
     public bool IsSome { get; }
     public bool IsNone => !this.IsSome;
-
-    // implicit conversions for ease of use
-    public static implicit operator Option<T>(T res) => Option.Some(res);
-    public static implicit operator Option<T>(Option.NoneImpl o) => default(Option<T>);
   }
 }

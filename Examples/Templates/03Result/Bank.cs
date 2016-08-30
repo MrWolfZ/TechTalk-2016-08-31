@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Functional.Solutions._03Result;
+using Functional.Templates._03Result;
 
-namespace Examples.Solutions._03Result
+namespace Examples.Templates._03Result
 {
   public class Bank
   {
@@ -41,10 +41,10 @@ namespace Examples.Solutions._03Result
       return $"account {accountId} does not exist";
     }
 
-    public Result<Bank, string> Deposit(long accountId, double amount) =>
-      this.FindAccount(accountId)
-          .Bind(Deposit(amount))
-          .Map(this.SetAccount);
+    public Result<Bank, string> Deposit(long accountId, double amount)
+    {
+      throw new NotImplementedException();
+    }
 
     private static Func<Account, Result<Account, string>> Deposit(double amount) => a =>
     {
@@ -56,10 +56,10 @@ namespace Examples.Solutions._03Result
       return a.With(balance: a.Balance + amount);
     };
 
-    public Result<Bank, string> Withdraw(long accountId, double amount) =>
-      this.FindAccount(accountId)
-          .Bind(Withdraw(amount))
-          .Map(this.SetAccount);
+    public Result<Bank, string> Withdraw(long accountId, double amount)
+    {
+      throw new NotImplementedException();
+    }
 
     private static Func<Account, Result<Account, string>> Withdraw(double amount) => a =>
     {

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Functional.Solutions._02Option;
+using static Functional.Solutions._02Option.Option;
 
 namespace Examples.Solutions._02Option
 {
@@ -23,67 +25,50 @@ namespace Examples.Solutions._02Option
     {
       if (this.Accounts.ContainsKey(id))
       {
-        return Option.None;
+        return None;
       }
 
       var updatedAccounts = new Dictionary<long, Account>(this.Accounts) { { id, new Account(id, 0) } };
       return new Bank(updatedAccounts);
     }
 
+    private Option<Account> FindAccount(long accountId) =>
+      this.Accounts.ContainsKey(accountId) ? Some(this.Accounts[accountId]) : None;
+
     public Option<Bank> Deposit(long accountId, double amount) =>
       this.FindAccount(accountId)
-          .Bind(a => a.Deposit(amount))
+          .Bind(Deposit(amount))
           .Map(this.SetAccount);
+
+    private static Func<Account, Option<Account>> Deposit(double amount) => a =>
+    {
+      if (amount < 0)
+      {
+        return None;
+      }
+
+      return a.With(balance: a.Balance + amount);
+    };
 
     public Option<Bank> Withdraw(long accountId, double amount) =>
       this.FindAccount(accountId)
-          .Bind(a => a.Withdraw(amount))
+          .Bind(Withdraw(amount))
           .Map(this.SetAccount);
+
+    private static Func<Account, Option<Account>> Withdraw(double amount) => a =>
+    {
+      if (amount < 0 || a.Balance < amount)
+      {
+        return None;
+      }
+
+      return a.With(balance: a.Balance - amount);
+    };
 
     private Bank SetAccount(Account account)
     {
       var updatedAccounts = new Dictionary<long, Account>(this.Accounts) { [account.Id] = account };
       return new Bank(updatedAccounts);
-    }
-
-    private Option<Account> FindAccount(long accountId) =>
-      this.Accounts.ContainsKey(accountId) ? Option.Some(this.Accounts[accountId]) : Option.None;
-
-    public class Account
-    {
-      public Account(long id, double balance)
-      {
-        this.Id = id;
-        this.Balance = balance;
-      }
-
-      public long Id { get; }
-      public double Balance { get; }
-
-      public override string ToString()
-      {
-        return $"[Account] Id: {this.Id}, Balance: {this.Balance}";
-      }
-
-      public Option<Account> Withdraw(double amount)
-      {
-        if (amount < 0 || this.Balance < amount)
-        {
-          return Option.None;
-        }
-
-        return new Account(this.Id, this.Balance - amount);
-      }
-
-      public Option<Account> Deposit(double amount)
-      {
-        if (amount < 0)
-        {
-          return Option.None;
-        }
-
-        return new Account(this.Id, this.Balance + amount);
-      }
     }
   }
 }

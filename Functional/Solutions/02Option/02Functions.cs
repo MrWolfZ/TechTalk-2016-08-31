@@ -19,7 +19,7 @@ namespace Functional.Solutions._02Option
       ifNone();
     }
 
-    public static Option<TOption> IfSome<TOption>(this Option<TOption> opt, Action<TOption> ifSome)
+    public static Option<TOption> DoIfSome<TOption>(this Option<TOption> opt, Action<TOption> ifSome)
     {
       if (opt.IsSome)
       {
@@ -29,7 +29,7 @@ namespace Functional.Solutions._02Option
       return opt;
     }
 
-    public static Option<TOption> IfNone<TOption>(this Option<TOption> opt, Action ifNone)
+    public static Option<TOption> DoIfNone<TOption>(this Option<TOption> opt, Action ifNone)
     {
       if (!opt.IsSome)
       {
@@ -39,10 +39,10 @@ namespace Functional.Solutions._02Option
       return opt;
     }
 
-    public static TOption IfNone<TOption>(this Option<TOption> opt, Func<TOption> ifNone)
+    public static TOption GetOrElse<TOption>(this Option<TOption> opt, Func<TOption> ifNone)
       => opt.IsSome ? opt.Value : ifNone();
 
-    public static TOption IfNone<TOption>(this Option<TOption> opt, TOption ifNone) => opt.IfNone(() => ifNone);
+    public static TOption GetOrElse<TOption>(this Option<TOption> opt, TOption ifNone) => opt.GetOrElse(() => ifNone);
 
     public static Option<TResult> Bind<TSource, TResult>(this Option<TSource> opt, Func<TSource, Option<TResult>> f)
       => opt.Match(f, () => Option.None);

@@ -25,6 +25,22 @@ namespace Functional.Solutions._04AsyncResult
       return await res.Match(ifSuccess, ifFailure);
     }
 
+    public static async Task<Unit> Match<TSuccess, TFailure>(
+      this Task<Result<TSuccess, TFailure>> task,
+      Action<TSuccess> ifSuccess,
+      Action<TFailure> ifFailure)
+    {
+      var res = await task;
+      if (res.IsSuccess)
+      {
+        ifSuccess(res.Success);
+        return Unit.Default;
+      }
+
+      ifFailure(res.Failure);
+      return Unit.Default;
+    }
+
     public static Task<Result<TResult, TFailure>> Bind<TSuccess, TFailure, TResult>(
       this Result<TSuccess, TFailure> res,
       Func<TSuccess, Task<Result<TResult, TFailure>>> f) =>

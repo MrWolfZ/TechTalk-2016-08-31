@@ -1,7 +1,7 @@
 ﻿using System;
-using Examples.Solutions._02Option;
+using Examples.Templates._02Option;
 using Functional;
-using Functional.Solutions._02Option;
+using Functional.Templates._02Option;
 
 namespace Examples
 {
@@ -22,9 +22,9 @@ namespace Examples
           break;
         }
 
-        bank = res.IfNone(bank)
-                  .IfNone(() => Console.WriteLine("An error occured during the operation!"))
-                  .IfNone(bank);
+        bank = res.GetOrElse(bank)
+                  .DoIfNone(() => Console.WriteLine("An error occured during the operation!"))
+                  .GetOrElse(bank);
       }
 
       Console.WriteLine("Ended example with bank in state '{0}'.", bank);
@@ -57,7 +57,7 @@ namespace Examples
       return Console.ReadLine()
                     .TryParseLong()
                     .Bind(bank.CreateAccount)
-                    .IfSome(b => Console.WriteLine("Created account!"));
+                    .DoIfSome(b => Console.WriteLine("Created account!"));
     }
 
     private static Option<Bank> Deposit(Bank bank)
@@ -69,7 +69,7 @@ namespace Examples
 
       return TryParseAccountIdAndAmount(accountIdInput, amountInput)
         .Bind(t => bank.Deposit(t.Item1, t.Item2))
-        .IfSome(b => Console.WriteLine("Deposited amount!"));
+        .DoIfSome(b => Console.WriteLine("Deposited amount!"));
     }
 
     private static Option<Bank> Withdraw(Bank bank)
@@ -81,7 +81,7 @@ namespace Examples
 
       return TryParseAccountIdAndAmount(accountIdInput, amountInput)
         .Bind(t => bank.Withdraw(t.Item1, t.Item2))
-        .IfSome(b => Console.WriteLine("Withdrew amount!"));
+        .DoIfSome(b => Console.WriteLine("Withdrew amount!"));
     }
 
     private static Option<Tuple<long, double>> TryParseAccountIdAndAmount(string accountId, string amount) =>
