@@ -25,9 +25,10 @@ namespace Examples
           break;
         }
 
-        await opt.ToResult("").Map(t => t.Match(
-          b => bank = b,
-          err => Console.Error.WriteLine($"An error occured during the operation: {err}")));
+        await opt.ToResult("").Map(
+          t => t.Match(
+            b => bank = b,
+            err => Console.Error.WriteLine($"An error occured during the operation: {err}")));
       }
 
       Console.WriteLine("Ended example with bank in state '{0}'.", bank);

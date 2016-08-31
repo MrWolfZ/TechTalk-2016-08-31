@@ -15,7 +15,39 @@ namespace Functional.Solutions._01Enumerable
       yield return obj;
     }
 
-    // SelectMany
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ?
     public static IEnumerable<TResult> Bind<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> f)
     {
       foreach (var item in source)
@@ -27,15 +59,139 @@ namespace Functional.Solutions._01Enumerable
       }
     }
 
-    // Select
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ?
     public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> f) =>
       source.Bind(item => f(item).Unit());
 
-    // Where
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ?
     public static IEnumerable<TSource> Filter<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> f) =>
       source.Bind(item => f(item) ? item.Unit() : Empty<TSource>());
 
-    // Aggregate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ?
     public static TState Fold<TSource, TState>(this IEnumerable<TSource> source, TState initial, Func<TState, TSource, TState> f)
     {
       var state = initial;
@@ -46,6 +202,41 @@ namespace Functional.Solutions._01Enumerable
 
       return state;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static TSource Last<TSource>(this IEnumerable<TSource> source) => source.Fold(default(TSource), (agg, current) => current);
 

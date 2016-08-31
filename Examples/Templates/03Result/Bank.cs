@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Functional.Templates._03Result;
+using Functional.Solutions._03Result;
 
 namespace Examples.Templates._03Result
 {

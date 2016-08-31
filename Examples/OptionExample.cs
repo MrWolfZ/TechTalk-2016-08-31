@@ -1,7 +1,7 @@
 ﻿using System;
 using Examples.Templates._02Option;
 using Functional;
-using Functional.Templates._02Option;
+using Functional.Solutions._02Option;
 
 namespace Examples
 {
